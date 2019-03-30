@@ -327,6 +327,7 @@ starts.with <- substr(gapminder$country, start = 1, stop = 1)
 # Filter countries that start with "A" or "Z"
 az.countries <- gapminder[starts.with %in% c("A", "Z"), ]
 # Make the plot
+library(ggplot2)
 ggplot(data = az.countries, aes(x = year, y = lifeExp, color = continent)) +
   geom_line() + facet_wrap( ~ country)
 ```
