@@ -60,7 +60,7 @@ pipes (`%>%`) to combine them.
 
 If you have have not installed this package earlier, please do so by installing dplyr package or an umbrella package, tidyverse.
 
-```{r,eval=FALSE}
+```{r}
 install.packages('dplyr')
 
 ## alternately install tidyverse package
@@ -69,7 +69,7 @@ install.package("tidyverse")
 
 Now let's load the package:
 
-```{r,message=FALSE}
+```{r message=FALSE, warning=FALSE}
 library("dplyr")
 ```
 
@@ -103,7 +103,7 @@ lapply(gapminder, class)
 
 ## peek into tibble: More expressive
 head(gapminder)
-## query for column which is not present in tibble 
+## query for column which is not present in tibble
 gapminder$foo
 
 #### what is tibble? ####
@@ -113,29 +113,24 @@ gapminder$foo
 gapminder <- as_tibble(gapminder)
 ```
 
-> ## Optional chunk 1
-> What do you observe when you run same commands as above for data frame?
->
->
-> ## Solution to optional chunk 1
-> >```{r}
-> >## It is a ?
-> >typeof(gapminder)
-> >## with a class: ?
-> >class(gapminder)
-> >## of vectors (columns) of ?
-> >attributes(gapminder)
-> >
-> >## find class of each vector (column)
-> >lapply(gapminder, class)
-> >
-> >## peek into tibble: More expressive
-> >head(gapminder)
-> >## query for column which is not present in tibble 
-> >gapminder$foo
-> >```
-> {: .solution}
-{: .challenge}
+What do you observe when you run same commands as above for data frame?
+
+```{r, eval = FALSE, include=TRUE}
+## It is a ?
+typeof(gapminder)
+## with a class: ?
+class(gapminder)
+## of vectors (columns) of ?
+attributes(gapminder)
+
+## find class of each vector (column)
+lapply(gapminder, class)
+
+## peek into tibble: More expressive
+head(gapminder)
+## query for column which is not present in tibble
+gapminder$foo
+```
 
 ## Using select()
 
