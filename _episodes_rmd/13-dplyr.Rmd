@@ -46,7 +46,7 @@ Luckily, the [`dplyr`](https://cran.r-project.org/web/packages/dplyr/dplyr.pdf)
 package provides a number of very useful functions for manipulating dataframes
 in a way that will reduce the above repetition, reduce the probability of making
 errors, and probably even save you some typing. As an added bonus, you might
-even find the `dplyr` grammar easier to read.
+even find the `dplyr` **grammar easier to read**.
 
 Here we're going to cover 6 of the most commonly used functions as well as using
 pipes (`%>%`) to combine them.
@@ -72,6 +72,70 @@ Now let's load the package:
 ```{r,message=FALSE}
 library("dplyr")
 ```
+
+### Key assumptions of dplyr package
+
+* Each row contains an observation
+* Each column contains a variable or a feature for the observation
+* Query by rownames are discouraged
+  * Details under resource section at the end
+
+![](../fig/13-dplyr-sketch1.png)
+
+### Before we begin...
+
+Let's convert data.frame to tibble format.
+
+Tibble is a new and dplyr-friendly version of data frame. Unlike data frame, tibble format is more robust and less prone for common errors, e.g., tibble format is more expressive in showing warnings and avoid common mistakes while manipulating data frames in R.
+
+```{r}
+#### what is data.frame? ####
+
+## It is a named list
+typeof(gapminder)
+## with a class: data.frame
+class(gapminder)
+## of vectors (columns) of equal length.
+attributes(gapminder)
+
+## find class of each vector (column)
+lapply(gapminder, class)
+
+## peek into tibble: More expressive
+head(gapminder)
+## query for column which is not present in tibble 
+gapminder$foo
+
+#### what is tibble? ####
+### convert to tibble
+## ok to overwrite table as conversion does not change contents of a data frame
+
+gapminder <- as_tibble(gapminder)
+```
+
+> ## Optional chunk 1
+> What do you observe when you run same commands as above for data frame?
+>
+>
+> ## Solution to optional chunk 1
+> >```{r}
+> >## It is a ?
+> >typeof(gapminder)
+> >## with a class: ?
+> >class(gapminder)
+> >## of vectors (columns) of ?
+> >attributes(gapminder)
+> >
+> >## find class of each vector (column)
+> >lapply(gapminder, class)
+> >
+> >## peek into tibble: More expressive
+> >head(gapminder)
+> >## query for column which is not present in tibble 
+> >gapminder$foo
+> >```
+> {: .solution}
+{: .challenge}
 
 ## Using select()
 
@@ -395,3 +459,5 @@ gapminder %>%
 * [Data Wrangling Cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
 * [Introduction to dplyr](https://dplyr.tidyverse.org/)
 * [Data wrangling with R and RStudio](https://www.rstudio.com/resources/webinars/data-wrangling-with-r-and-rstudio/)
+* [Hadley Wickham](https://twitter.com/hadleywickham/status/1017562721456275456?lang=en) on [Why dplyr does not support rownames](https://adv-r.hadley.nz/vectors-chap.html#rownames)?
+* Tibble vs data frame in [Advanced R](https://adv-r.hadley.nz/vectors-chap.html#tibble) by Hadley Wickham.
