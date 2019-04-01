@@ -96,7 +96,7 @@ typeof(gapminder)
 ## with a class: data.frame
 class(gapminder)
 ## of vectors (columns) of equal length.
-attributes(gapminder)
+attributes(gapminder)[1:2] # I am only extracting first 2 of total 3 vectors
 
 ## find class of each vector (column)
 lapply(gapminder, class)
@@ -139,7 +139,7 @@ our dataframe we could use the `select()` function. This will keep only the
 variables you select.
 
 ```{r}
-year_country_gdp <- select(gapminder,year,country,gdpPercap)
+year_country_gdp <- select(gapminder, year, country, gdpPercap)
 ```
 
 ![](../fig/13-dplyr-fig1.png)
@@ -151,7 +151,8 @@ is unlike anything we've seen in R before, let's repeat what we've done above
 using pipes.
 
 ```{r}
-year_country_gdp <- gapminder %>% select(year,country,gdpPercap)
+year_country_gdp <- gapminder %>%
+                      select(year, country, gdpPercap)
 ```
 
 To help you understand why we wrote that in that way, let's walk through it step
@@ -162,6 +163,62 @@ gets that from the previous pipe. **Fun Fact**: There is a good chance you have
 encountered pipes before in the shell. In R, a pipe symbol is `%>%` while in the
 shell it is `|` but the concept is the same!
 
+If you are dealing with multiple, say 100 columns, and like to select 26th to 75th columns, you can do so by using `:` or range function.
+
+```{r}
+## select using column positions
+gapminder %>%
+  select(3:5) %>%
+  head(2)
+
+## select using column names
+gapminder %>%
+  select(year:pop) %>%
+  head(2)
+```
+
+Similarly, using `c()` select columns by column positions. However, it is best practice to avoid selecting column by their relative positions, and instead rely on explicit matching by text string in column names, e.g., select column "year" by `select(year, country)` instead of using `select(c(3,1))`.
+
+Finally, `select()` function also accepts several helper functions from tidyverse family package, *tidyselect*. These helper functions allow you to conveniently select columns using one of following methods:
+
+Here, we use a new dataset, *iris* for demonstration of helper functions.
+
+```{r}
+## load dataset, iris
+data(iris)
+
+## starts_with
+iris %>%
+  select(starts_with("Petal")) %>%
+  head(2)
+
+## Write a code to use ends_with function to get one of two sets of columns having identical text in their names
+
+## contains matches for a literal text string
+iris %>%
+  select(contains("Length")) %>%
+  head(2)
+
+## matches is like a grep and can also matches for a regular expression or wildcards
+iris %>%
+  select(matches("Wi.*th")) %>%
+  head(2)
+
+## extract based on character verctor of column names
+colnames_to_extract <- c("Sepal.Length", "Species")
+
+iris %>%
+  select(one_of(colnames_to_extract)) %>%
+  head(2)
+
+## we can even arrange columns
+iris %>%
+  select(one_of(colnames_to_extract), everything()) %>%
+  head(2)
+```
+
+You can learn more about additional helper functions `?tidyselect::select_helpers`
+
 ## Using filter()
 
 If we now wanted to move forward with the above, but only with European
@@ -170,7 +227,7 @@ countries, we can combine `select` and `filter`
 ```{r}
 year_country_gdp_euro <- gapminder %>%
     filter(continent=="Europe") %>%
-    select(year,country,gdpPercap)
+    select(year, country, gdpPercap)
 ```
 
 > ## Challenge 1
