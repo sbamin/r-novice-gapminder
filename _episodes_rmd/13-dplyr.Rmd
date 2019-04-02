@@ -60,16 +60,16 @@ pipes (`%>%`) to combine them.
 
 If you have have not installed this package earlier, please do so by installing dplyr package or an umbrella package, tidyverse.
 
-```{r}
+```{r, eval=FALSE, , include=TRUE}
 install.packages('dplyr')
 
 ## alternately install tidyverse package
-install.package("tidyverse")
+# install.packages("tidyverse")
 ```
 
 Now let's load the package:
 
-```{r message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library("dplyr")
 ```
 
@@ -262,10 +262,13 @@ can use `group_by()`, which will essentially use every unique criteria that you
 could have used in filter.
 
 ```{r}
+## what is a data structure of a tibble or data.frame?
 str(gapminder)
 
+## what happends after group_by command?
 str(gapminder %>% group_by(continent))
 ```
+
 You will notice that the structure of the dataframe where we used `group_by()`
 (`grouped_df`) is not the same as the original `gapminder` (`data.frame`). A
 `grouped_df` can be thought of as a `list` where each item in the `list`is a
@@ -273,6 +276,11 @@ You will notice that the structure of the dataframe where we used `group_by()`
 value `continent` (at least in the example above).
 
 ![](../fig/13-dplyr-fig2.png)
+
+```{r, eval=FALSE}
+## What do we get if ungroup?
+str(gapminder %>% group_by(continent) %>% ungroup())
+```
 
 ## Using summarize()
 
@@ -291,7 +299,7 @@ gdp_bycontinents <- gapminder %>%
 
 ![](../fig/13-dplyr-fig3.png)
 
-```{r,eval=FALSE}
+```{r, eval=FALSE}
 continent mean_gdpPercap
      <fctr>          <dbl>
 1    Africa       2193.755
@@ -353,6 +361,8 @@ gdp_pop_bycontinents_byyear <- gapminder %>%
               mean_pop=mean(pop),
               sd_pop=sd(pop))
 ```
+
+Optional exercise: You can even summarise at multiple columns using additional functions, `summarise_at` or `summarise_if`. [Read more on dplyr website](https://dplyr.tidyverse.org/reference/summarise_all.html)
 
 ## count() and n()
 

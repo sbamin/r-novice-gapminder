@@ -95,40 +95,11 @@ If you have have not installed this package earlier, please do so by installing 
 
 ~~~
 install.packages('dplyr')
-~~~
-{: .language-r}
 
-
-
-~~~
-Installing package into '/Users/samin1/Library/R/3.4/library'
-(as 'lib' is unspecified)
-~~~
-{: .output}
-
-
-
-~~~
-
-The downloaded binary packages are in
-	/var/folders/kq/hcddsvts08jcc5jplx58b4bm0000gq/T//RtmpEiIdMM/downloaded_packages
-~~~
-{: .output}
-
-
-
-~~~
 ## alternately install tidyverse package
-install.package("tidyverse")
+# install.packages("tidyverse")
 ~~~
 {: .language-r}
-
-
-
-~~~
-Error in install.package("tidyverse"): could not find function "install.package"
-~~~
-{: .error}
 
 Now let's load the package:
 
@@ -537,6 +508,7 @@ could have used in filter.
 
 
 ~~~
+## what is a data structure of a tibble or data.frame?
 str(gapminder)
 ~~~
 {: .language-r}
@@ -557,6 +529,7 @@ Classes 'tbl_df', 'tbl' and 'data.frame':	1704 obs. of  6 variables:
 
 
 ~~~
+## what happends after group_by command?
 str(gapminder %>% group_by(continent))
 ~~~
 {: .language-r}
@@ -582,6 +555,7 @@ Classes 'grouped_df', 'tbl_df', 'tbl' and 'data.frame':	1704 obs. of  6 variable
   ..- attr(*, ".drop")= logi TRUE
 ~~~
 {: .output}
+
 You will notice that the structure of the dataframe where we used `group_by()`
 (`grouped_df`) is not the same as the original `gapminder` (`data.frame`). A
 `grouped_df` can be thought of as a `list` where each item in the `list`is a
@@ -589,6 +563,13 @@ You will notice that the structure of the dataframe where we used `group_by()`
 value `continent` (at least in the example above).
 
 ![](../fig/13-dplyr-fig2.png)
+
+
+~~~
+## What do we get if ungroup?
+str(gapminder %>% group_by(continent) %>% ungroup())
+~~~
+{: .language-r}
 
 ## Using summarize()
 
@@ -718,6 +699,8 @@ gdp_pop_bycontinents_byyear <- gapminder %>%
               sd_pop=sd(pop))
 ~~~
 {: .language-r}
+
+Optional exercise: You can even summarise at multiple columns using additional functions, `summarise_at` or `summarise_if`. [Read more on dplyr website](https://dplyr.tidyverse.org/reference/summarise_all.html)
 
 ## count() and n()
 
@@ -885,7 +868,7 @@ ggplot(data = az.countries, aes(x = year, y = lifeExp, color = continent)) +
 ~~~
 {: .language-r}
 
-<img src="../fig/rmd-13-unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" width="612" style="display: block; margin: auto;" />
+<img src="../fig/rmd-13-unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" width="612" style="display: block; margin: auto;" />
 
 This code makes the right plot but it also creates some variables (`starts.with`
 and `az.countries`) that we might not have any other uses for. Just as we used
@@ -909,7 +892,7 @@ gapminder %>%
 ~~~
 {: .language-r}
 
-<img src="../fig/rmd-13-unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" width="612" style="display: block; margin: auto;" />
+<img src="../fig/rmd-13-unnamed-chunk-27-1.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" width="612" style="display: block; margin: auto;" />
 
 Using `dplyr` functions also helps us simplify things, for example we could
 combine the first two steps:
@@ -926,7 +909,7 @@ gapminder %>%
 ~~~
 {: .language-r}
 
-<img src="../fig/rmd-13-unnamed-chunk-27-1.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" width="612" style="display: block; margin: auto;" />
+<img src="../fig/rmd-13-unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="612" style="display: block; margin: auto;" />
 
 > ## Advanced Challenge
 >
