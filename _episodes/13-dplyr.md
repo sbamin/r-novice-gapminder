@@ -116,7 +116,7 @@ library("dplyr")
 * Query by rownames are discouraged
   * Details under resource section at the end
 
-![](../fig/13-dplyr-sketch1.png)
+![](../fig/13-dplyr-sketch2.gif)
 
 ### Before we begin...
 
