@@ -29,6 +29,10 @@ do these operations using the normal base R operations:
 
 
 ~~~
+## load gapminder dataset
+gapminder <- read.csv("data/gapminder_data.csv", header=TRUE)
+
+## get mean gdpPercap for three continents
 mean(gapminder[gapminder$continent == "Africa", "gdpPercap"])
 ~~~
 {: .language-r}
@@ -101,28 +105,11 @@ install.packages('dplyr')
 ~~~
 {: .language-r}
 
-Now let's load the package:
+## Before we load dplyr...
 
+Let's refresh what's `data.frame` in R
 
-~~~
-library("dplyr")
-~~~
-{: .language-r}
-
-### Key assumptions of dplyr package
-
-* Each row contains an observation
-* Each column contains a variable or a feature for the observation
-* Query by rownames are discouraged
-  * Details under resource section at the end
-
-![](../fig/13-dplyr-sketch2.gif)
-
-### Before we begin...
-
-Let's convert data.frame to tibble format.
-
-Tibble is a new and dplyr-friendly version of data frame. Unlike data frame, tibble format is more robust and less prone for common errors, e.g., tibble format is more expressive in showing warnings and avoid common mistakes while manipulating data frames in R.
+<iframe width="90%" height="500" src="https://www.youtube.com/embed/qY-JoVXscMc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 ~~~
@@ -137,6 +124,20 @@ typeof(gapminder)
 
 ~~~
 [1] "list"
+~~~
+{: .output}
+
+
+
+~~~
+attributes(gapminder)$names # I am only extracting a "names" attribute of total 3 available attributes
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "country"   "year"      "pop"       "continent" "lifeExp"   "gdpPercap"
 ~~~
 {: .output}
 
@@ -158,26 +159,8 @@ class(gapminder)
 
 
 ~~~
-## of vectors (columns) of equal length.
-attributes(gapminder)[1:2] # I am only extracting first 2 of total 3 vectors
-~~~
-{: .language-r}
-
-
-
-~~~
-$names
-[1] "country"   "year"      "pop"       "continent" "lifeExp"   "gdpPercap"
-
-$class
-[1] "data.frame"
-~~~
-{: .output}
-
-
-
-~~~
 ## find class of each vector (column)
+## lapply is like applying the same function, i.e., to get the class of a vector. over more than one vectors of a list.
 lapply(gapminder, class)
 ~~~
 {: .language-r}
@@ -208,7 +191,38 @@ $gdpPercap
 
 
 ~~~
-## peek into tibble: More expressive
+## of vectors (columns) of equal length.
+lapply(gapminder, length)
+~~~
+{: .language-r}
+
+
+
+~~~
+$country
+[1] 1704
+
+$year
+[1] 1704
+
+$pop
+[1] 1704
+
+$continent
+[1] 1704
+
+$lifeExp
+[1] 1704
+
+$gdpPercap
+[1] 1704
+~~~
+{: .output}
+
+
+
+~~~
+## peek into data.frame
 head(gapminder)
 ~~~
 {: .language-r}
@@ -229,7 +243,7 @@ head(gapminder)
 
 
 ~~~
-## query for column which is not present in tibble
+## query for column which is not present in data.frame
 gapminder$foo
 ~~~
 {: .language-r}
@@ -241,13 +255,28 @@ NULL
 ~~~
 {: .output}
 
+## Now let's load the package
 
 
 ~~~
-#### what is tibble? ####
-### convert to tibble
-## ok to overwrite table as conversion does not change contents of a data frame
+library("dplyr")
+~~~
+{: .language-r}
 
+### Key assumptions of dplyr package
+
+* Each row contains an observation
+* Each column contains a variable or a feature for the observation
+* Query by rownames are discouraged
+  * Details under resource section at the end
+
+Now, let's convert **data.frame to tibble format**.
+
+>Tibble is a new and dplyr-friendly version of data frame. Unlike data frame, tibble format is more robust and less prone for common errors, e.g., tibble format is more expressive in showing warnings and avoid common mistakes while manipulating data frames in R.
+
+
+~~~
+## ok to overwrite table as conversion does not change contents of a data frame
 gapminder <- as_tibble(gapminder)
 ~~~
 {: .language-r}
@@ -258,17 +287,22 @@ What do you observe when you run same commands as above for data frame?
 ~~~
 ## It is a ?
 typeof(gapminder)
+## with names ? of vectors
+attributes(gapminder)$names
+
 ## with a class: ?
 class(gapminder)
-## of vectors (columns) of ?
-attributes(gapminder)
 
 ## find class of each vector (column)
 lapply(gapminder, class)
 
-## peek into tibble: More expressive
+## of vectors (columns) of ? length.
+lapply(gapminder, length)
+
+## peek into tibble format: what difference you notice compared to earlier output?
 head(gapminder)
-## query for column which is not present in tibble
+
+## Similarly, query for column which is not present in tibble
 gapminder$foo
 ~~~
 {: .language-r}
@@ -351,7 +385,7 @@ gapminder %>%
 ~~~
 {: .output}
 
-Similarly, using `c()` select columns by column positions. However, it is best practice to avoid selecting column by their relative positions, and instead rely on explicit matching by text string in column names, e.g., select column "year" by `select(year, country)` instead of using `select(c(3,1))`.
+Similarly, using `c()` select columns by column positions. However, it is **best practice to avoid selecting column by their relative positions**, and instead rely on explicit matching by text string in column names, e.g., select column "year" by `select(year, country)` instead of using `select(c(3,1))`.
 
 Finally, `select()` function also accepts several helper functions from tidyverse family package, *tidyselect*. These helper functions allow you to conveniently select columns using one of following methods:
 
@@ -378,11 +412,10 @@ iris %>%
 ~~~
 {: .output}
 
+>Write a code to use ends_with function to get one of two sets of columns having identical text in their names.
 
 
 ~~~
-## Write a code to use ends_with function to get one of two sets of columns having identical text in their names
-
 ## contains matches for a literal text string
 iris %>%
   select(contains("Length")) %>%
@@ -556,6 +589,17 @@ Classes 'grouped_df', 'tbl_df', 'tbl' and 'data.frame':	1704 obs. of  6 variable
 ~~~
 {: .output}
 
+You can also peek into dataframe before and after group_by function.
+
+
+~~~
+gapminder
+
+gapminder %>%
+  group_by(continent)
+~~~
+{: .language-r}
+
 You will notice that the structure of the dataframe where we used `group_by()`
 (`grouped_df`) is not the same as the original `gapminder` (`data.frame`). A
 `grouped_df` can be thought of as a `list` where each item in the `list`is a
@@ -700,7 +744,7 @@ gdp_pop_bycontinents_byyear <- gapminder %>%
 ~~~
 {: .language-r}
 
-Optional exercise: You can even summarise at multiple columns using additional functions, `summarise_at` or `summarise_if`. [Read more on dplyr website](https://dplyr.tidyverse.org/reference/summarise_all.html)
+>Optional exercise: You can even summarise at multiple columns using additional functions, `summarise_at` or `summarise_if`. [Read more on dplyr website](https://dplyr.tidyverse.org/reference/summarise_all.html)
 
 ## count() and n()
 
@@ -848,7 +892,7 @@ extra comments):
 starts.with <- substr(gapminder$country, start = 1, stop = 1)
 # Filter countries that start with "A" or "Z"
 az.countries <- gapminder[starts.with %in% c("A", "Z"), ]
-# Make the plot
+# Make the plot: NOTE the change in pipe operator for ggplot
 library(ggplot2)
 ~~~
 {: .language-r}
@@ -868,7 +912,7 @@ ggplot(data = az.countries, aes(x = year, y = lifeExp, color = continent)) +
 ~~~
 {: .language-r}
 
-<img src="../fig/rmd-13-unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" width="612" style="display: block; margin: auto;" />
+<img src="../fig/rmd-13-unnamed-chunk-29-1.png" title="plot of chunk unnamed-chunk-29" alt="plot of chunk unnamed-chunk-29" width="612" style="display: block; margin: auto;" />
 
 This code makes the right plot but it also creates some variables (`starts.with`
 and `az.countries`) that we might not have any other uses for. Just as we used
@@ -885,14 +929,14 @@ gapminder %>%
    mutate(startsWith = substr(country, start = 1, stop = 1)) %>%
    # Filter countries that start with "A" or "Z"
    filter(startsWith %in% c("A", "Z")) %>%
-   # Make the plot
+   # Make the plot: NOTE the change in pipe operator for ggplot
    ggplot(aes(x = year, y = lifeExp, color = continent)) +
    geom_line() +
    facet_wrap( ~ country)
 ~~~
 {: .language-r}
 
-<img src="../fig/rmd-13-unnamed-chunk-27-1.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" width="612" style="display: block; margin: auto;" />
+<img src="../fig/rmd-13-unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" width="612" style="display: block; margin: auto;" />
 
 Using `dplyr` functions also helps us simplify things, for example we could
 combine the first two steps:
@@ -909,7 +953,7 @@ gapminder %>%
 ~~~
 {: .language-r}
 
-<img src="../fig/rmd-13-unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="612" style="display: block; margin: auto;" />
+<img src="../fig/rmd-13-unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" width="612" style="display: block; margin: auto;" />
 
 > ## Advanced Challenge
 >
@@ -927,8 +971,24 @@ gapminder %>%
 > >    sample_n(2) %>%
 > >    summarize(mean_lifeExp=mean(lifeExp)) %>%
 > >    arrange(desc(mean_lifeExp))
+> >
+> > head(lifeExp_2countries_bycontinents)
 > >~~~
 > >{: .language-r}
+> >
+> >
+> >
+> >~~~
+> ># A tibble: 5 x 2
+> >  continent mean_lifeExp
+> >  <fct>            <dbl>
+> >1 Oceania           79.7
+> >2 Europe            78.8
+> >3 Asia              70.4
+> >4 Americas          69.4
+> >5 Africa            65.4
+> >~~~
+> >{: .output}
 > {: .solution}
 {: .challenge}
 

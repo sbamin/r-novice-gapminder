@@ -22,7 +22,7 @@ exercises: 15
 source("../bin/chunk-options.R")
 knitr_fig_path("13-")
 # Silently load in the data so the rest of the lesson works
-gapminder <- read.csv("data/gapminder_data.csv", header=TRUE)
+# gapminder <- read.csv("data/gapminder_data.csv", header=TRUE)
 ```
 
 Manipulation of dataframes means many things to many researchers, we often
@@ -31,6 +31,10 @@ data by a certain variable(s), or we even calculate summary statistics. We can
 do these operations using the normal base R operations:
 
 ```{r}
+## load gapminder dataset
+gapminder <- read.csv("data/gapminder_data.csv", header=TRUE)
+
+## get mean gdpPercap for three continents
 mean(gapminder[gapminder$continent == "Africa", "gdpPercap"])
 mean(gapminder[gapminder$continent == "Americas", "gdpPercap"])
 mean(gapminder[gapminder$continent == "Asia", "gdpPercap"])
@@ -67,7 +71,37 @@ install.packages('dplyr')
 # install.packages("tidyverse")
 ```
 
-Now let's load the package:
+## Before we load dplyr...
+
+Let's refresh what's `data.frame` in R
+
+<iframe width="90%" height="500" src="https://www.youtube.com/embed/qY-JoVXscMc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+```{r}
+#### what is data.frame? ####
+
+## It is a named list
+typeof(gapminder)
+attributes(gapminder)$names # I am only extracting a "names" attribute of total 3 available attributes
+
+## with a class: data.frame
+class(gapminder)
+
+## find class of each vector (column)
+## lapply is like applying the same function, i.e., to get the class of a vector. over more than one vectors of a list.
+lapply(gapminder, class)
+
+## of vectors (columns) of equal length.
+lapply(gapminder, length)
+
+## peek into data.frame
+head(gapminder)
+
+## query for column which is not present in data.frame
+gapminder$foo
+```
+
+## Now let's load the package
 
 ```{r, message=FALSE, warning=FALSE}
 library("dplyr")
@@ -80,36 +114,12 @@ library("dplyr")
 * Query by rownames are discouraged
   * Details under resource section at the end
 
-![](../fig/13-dplyr-sketch2.gif)
+Now, let's convert **data.frame to tibble format**.
 
-### Before we begin...
-
-Let's convert data.frame to tibble format.
-
-Tibble is a new and dplyr-friendly version of data frame. Unlike data frame, tibble format is more robust and less prone for common errors, e.g., tibble format is more expressive in showing warnings and avoid common mistakes while manipulating data frames in R.
+>Tibble is a new and dplyr-friendly version of data frame. Unlike data frame, tibble format is more robust and less prone for common errors, e.g., tibble format is more expressive in showing warnings and avoid common mistakes while manipulating data frames in R.
 
 ```{r}
-#### what is data.frame? ####
-
-## It is a named list
-typeof(gapminder)
-## with a class: data.frame
-class(gapminder)
-## of vectors (columns) of equal length.
-attributes(gapminder)[1:2] # I am only extracting first 2 of total 3 vectors
-
-## find class of each vector (column)
-lapply(gapminder, class)
-
-## peek into tibble: More expressive
-head(gapminder)
-## query for column which is not present in tibble
-gapminder$foo
-
-#### what is tibble? ####
-### convert to tibble
 ## ok to overwrite table as conversion does not change contents of a data frame
-
 gapminder <- as_tibble(gapminder)
 ```
 
@@ -118,17 +128,22 @@ What do you observe when you run same commands as above for data frame?
 ```{r, eval = FALSE, include=TRUE}
 ## It is a ?
 typeof(gapminder)
+## with names ? of vectors
+attributes(gapminder)$names
+
 ## with a class: ?
 class(gapminder)
-## of vectors (columns) of ?
-attributes(gapminder)
 
 ## find class of each vector (column)
 lapply(gapminder, class)
 
-## peek into tibble: More expressive
+## of vectors (columns) of ? length.
+lapply(gapminder, length)
+
+## peek into tibble format: what difference you notice compared to earlier output?
 head(gapminder)
-## query for column which is not present in tibble
+
+## Similarly, query for column which is not present in tibble
 gapminder$foo
 ```
 
@@ -177,7 +192,7 @@ gapminder %>%
   head(2)
 ```
 
-Similarly, using `c()` select columns by column positions. However, it is best practice to avoid selecting column by their relative positions, and instead rely on explicit matching by text string in column names, e.g., select column "year" by `select(year, country)` instead of using `select(c(3,1))`.
+Similarly, using `c()` select columns by column positions. However, it is **best practice to avoid selecting column by their relative positions**, and instead rely on explicit matching by text string in column names, e.g., select column "year" by `select(year, country)` instead of using `select(c(3,1))`.
 
 Finally, `select()` function also accepts several helper functions from tidyverse family package, *tidyselect*. These helper functions allow you to conveniently select columns using one of following methods:
 
@@ -191,9 +206,11 @@ data(iris)
 iris %>%
   select(starts_with("Petal")) %>%
   head(2)
+```
 
-## Write a code to use ends_with function to get one of two sets of columns having identical text in their names
+>Write a code to use ends_with function to get one of two sets of columns having identical text in their names.
 
+```{r}
 ## contains matches for a literal text string
 iris %>%
   select(contains("Length")) %>%
@@ -267,6 +284,15 @@ str(gapminder)
 
 ## what happends after group_by command?
 str(gapminder %>% group_by(continent))
+```
+
+You can also peek into dataframe before and after group_by function.
+
+```{r, eval=FALSE}
+gapminder
+
+gapminder %>%
+  group_by(continent)
 ```
 
 You will notice that the structure of the dataframe where we used `group_by()`
@@ -362,7 +388,7 @@ gdp_pop_bycontinents_byyear <- gapminder %>%
               sd_pop=sd(pop))
 ```
 
-Optional exercise: You can even summarise at multiple columns using additional functions, `summarise_at` or `summarise_if`. [Read more on dplyr website](https://dplyr.tidyverse.org/reference/summarise_all.html)
+>Optional exercise: You can even summarise at multiple columns using additional functions, `summarise_at` or `summarise_if`. [Read more on dplyr website](https://dplyr.tidyverse.org/reference/summarise_all.html)
 
 ## count() and n()
 
@@ -457,7 +483,7 @@ extra comments):
 starts.with <- substr(gapminder$country, start = 1, stop = 1)
 # Filter countries that start with "A" or "Z"
 az.countries <- gapminder[starts.with %in% c("A", "Z"), ]
-# Make the plot
+# Make the plot: NOTE the change in pipe operator for ggplot
 library(ggplot2)
 ggplot(data = az.countries, aes(x = year, y = lifeExp, color = continent)) +
   geom_line() + facet_wrap( ~ country)
@@ -477,7 +503,7 @@ gapminder %>%
    mutate(startsWith = substr(country, start = 1, stop = 1)) %>%
    # Filter countries that start with "A" or "Z"
    filter(startsWith %in% c("A", "Z")) %>%
-   # Make the plot
+   # Make the plot: NOTE the change in pipe operator for ggplot
    ggplot(aes(x = year, y = lifeExp, color = continent)) +
    geom_line() +
    facet_wrap( ~ country)
@@ -511,6 +537,8 @@ gapminder %>%
 > >    sample_n(2) %>%
 > >    summarize(mean_lifeExp=mean(lifeExp)) %>%
 > >    arrange(desc(mean_lifeExp))
+> >
+> > head(lifeExp_2countries_bycontinents)
 > >```
 > {: .solution}
 {: .challenge}
